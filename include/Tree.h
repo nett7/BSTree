@@ -17,8 +17,7 @@ namespace BSTree {
         }
     };
 
-    void print_to_file(Node *node, std::ostream &f);
-
+   
     void print_(int depth, Node *node);
 
 
