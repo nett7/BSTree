@@ -1,0 +1,3 @@
+/home/netta/CLionProjects/New Tree/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/netta/CLionProjects/New Tree/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/netta/CLionProjects/New Tree/cmake-build-debug/CMakeFiles/New_Tree.dir

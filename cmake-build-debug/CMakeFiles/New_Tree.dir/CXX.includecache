@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/netta/CLionProjects/New Tree/Tree.cpp
+Tree.h
+/home/netta/CLionProjects/New Tree/Tree.h
+sstream
+-
+fstream
+-
+iostream
+-
+
+/home/netta/CLionProjects/New Tree/Tree.h
+unistd.h
+-
+iostream
+-
+string
+-
+initializer_list
+-
+
+/home/netta/CLionProjects/New Tree/main.cpp
+iostream
+-
+Tree.h
+/home/netta/CLionProjects/New Tree/Tree.h
+
