@@ -37,16 +37,6 @@ void BSTree:: print_(int depth, BSTree::Node *node) {
     }
 };
 
-void  BSTree::print_to_file(BSTree::Node *node, ostream &f) {
-    if (node == nullptr)
-        return;
-    f << node->data << ' ';
-    BSTree::print_to_file(node->left, f);
-    BSTree::print_to_file(node->right, f);
-}
-
-
-
 
 void BSTree::Tree::clean(Node *&node) {
     {
