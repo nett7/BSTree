@@ -17,9 +17,7 @@ namespace BSTree {
         }
     };
 
-   
     void print_(int depth, Node *node);
-
 
     class Tree {
 
@@ -43,7 +41,7 @@ namespace BSTree {
             direct, symmetric, reverse
         };
 
-        void print_how( order order1 = order::direct, std::ostream &out = std::cout) const;
+        void print_how(order order_ = order::direct, std::ostream &out = std::cout) const;
 
         Tree(std::initializer_list<int> list_);
 
@@ -59,21 +57,21 @@ namespace BSTree {
 
         Tree &operator=(Tree &tree);
 
-        bool insert(int val);
+        void insert(int val);
 
         bool save(const std::string &path);
 
-        bool load(const std::string &path);
+        void load(const std::string &path);
 
         ~Tree() {
             clean(root);
         }
 
-        bool remove(int val);
+        void remove(int val);
 
         bool exist(int val);
 
-        friend std::ostream & operator<<(std::ostream &stream, const Tree &);
+        friend std::ostream &operator<<(std::ostream &stream, const Tree &);
 
     };
 }
