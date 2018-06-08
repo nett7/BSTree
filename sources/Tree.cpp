@@ -18,8 +18,7 @@ using std::ofstream;
 using std::ifstream;
 using std::stringstream;
 
-void BSTree:: print_(int depth, BSTree::Node *node) {
-
+void BSTree::print_(int depth, BSTree::Node *node) {
     if (node == nullptr) {
         if (depth == 0)
             cout << "Дерево пусто" << endl;
@@ -28,7 +27,7 @@ void BSTree:: print_(int depth, BSTree::Node *node) {
         BSTree::print_(depth + 1, node->right);
         for (int i = 0; i < depth; i++) {
             cout << "   ";
-            if (i == depth - 1) cout << "--";
+            if (i == depth - 1) cout << "~~";
         }
         cout << node->data << endl;
         BSTree::print_(depth + 1, node->left);
@@ -36,7 +35,6 @@ void BSTree:: print_(int depth, BSTree::Node *node) {
 
     }
 };
-
 
 void BSTree::Tree::clean(Node *&node) {
     {
@@ -47,13 +45,12 @@ void BSTree::Tree::clean(Node *&node) {
             node = nullptr;
         }
     }
-
 }
 
 void BSTree::Tree::direct_print(ostream &out, Node *node) const {
 
     if (node == nullptr)
-        return ;
+        return;
     out << node->data << ' ';
     direct_print(out, node->left);
     direct_print(out, node->right);
@@ -100,13 +97,15 @@ BSTree::Node *BSTree::Tree::find_parent(int &val) {
     return node;
 }
 
-void BSTree::Tree::print_how( Tree::order order1,ostream &out) const {
+
+void BSTree::Tree::print_how(Tree::order order_, ostream &out) const {
     if (root == nullptr) {
-        cout << "Дерево пусто\n";
-        return ;
+        throw logic_error("Дерево пусто");
+
     }
-    switch (order1) {
+    switch (order_) {
         case order::direct :
+            direct_print(out, root);
             break;
         case order::symmetric :
             symmetric_print(out, root);
@@ -124,39 +123,41 @@ BSTree::Tree::Tree(std::initializer_list<int> list_) {
         this->insert(item);
 }
 
-
-bool BSTree::Tree::insert(int val) {
+void BSTree::Tree::insert(int val) {
     if (root == nullptr) {
         root = new Node(val);
-        return true;
-    } else {
-        Node *temp = root;
-        Node *node = new Node(val);
-        while (true) {
-            if (val < temp->data) {
-                if (temp->left != nullptr)
-                    temp = temp->left;
-                else {
-                    temp->left = node;
-                    return true;
-                }
-            } else if (val == temp->data) {
-                throw logic_error("Узел уже существует в дереве");
+        return;
+    }
+    Node *temp = root;
+    Node *node = new Node(val);
+    while (true) {
+        if (val < temp->data) {
+            if (temp->left != nullptr)
+                temp = temp->left;
+            else {
+                temp->left = node;
+                return;
+            }
+        } else if (val == temp->data) {
 
-            } else {
-                if (temp->right != nullptr)
-                    temp = temp->right;
-                else {
-                    temp->right = node;
-                    return true;
-                }
+            delete node;
+            throw logic_error("Узел уже существует в дереве");
+
+        } else {
+            if (temp->right != nullptr)
+                temp = temp->right;
+            else {
+                temp->right = node;
+                return;
             }
         }
     }
+
 }
 
 bool BSTree::Tree::save(const string &path) {
-    if (!(access(path.c_str(), 0)))//проверяет существование файла
+    if (!(access(path.c_str(), 0)))
+        //проверяет существование файла
     {
         string answer;
         cout << " Файл уже существует. Перезаписать файл? (Да|Нет)" << endl;
@@ -167,15 +168,16 @@ bool BSTree::Tree::save(const string &path) {
             return true;
         } else
             return false;
-    } else//файл не существует
-    {
-        ofstream fout(path.c_str());
-        direct_print(fout, root);
-        return true;
     }
+    //файл не существует
+    ofstream fout(path.c_str());
+    direct_print(fout, root);
+    return true;
+
 }
 
-bool BSTree::Tree::load(const string &path) {
+
+void BSTree::Tree::load(const string &path) {
     if ((access(path.c_str(), 0))) {
         throw logic_error("Файл с заданным путем не существует");
     }
@@ -189,15 +191,15 @@ bool BSTree::Tree::load(const string &path) {
     }
     fin.close();
     cout << "Дерево было успешно загружено\n";
-    return true;
 }
 
-bool BSTree::Tree::remove(int val) {
+
+void BSTree::Tree::remove(int val) {
     Node *parent = find_parent(val);
 
     if (parent == nullptr && root->data != val) {
         cout << "Узел не был найден в дереве\n";
-        return true;
+        return;
     } else {
 
         Node *node_to_delete;
@@ -211,27 +213,27 @@ bool BSTree::Tree::remove(int val) {
             }
         }
         if (node_to_delete->left == nullptr) {
-            if (val > parent->data)
+            if (val > parent->data) {
                 parent->right = node_to_delete->right;
-            else {
+            } else {
                 parent->left = node_to_delete->right;
             }
             delete node_to_delete;
             cout << "Узел был успешно удален из дерева\n";
-            return true;
+            return;
         } else if (node_to_delete->right == nullptr) {
-            if (val > parent->data)
+            if (val > parent->data) {
                 parent->right = node_to_delete->left;
-            else {
+            } else {
                 parent->left = node_to_delete->left;
             }
             delete node_to_delete;
             cout << "Узел был успешно удален из дерева\n";
-            return true;
+            return;
         }
         // Здесь у удаляемого узла имеются два потомка
         // ищем ближайший по значению к удаляемому, при этом меньший его
-        // это prodecessor, меняем со значением node_to_delete и удаляем
+        // это predecessor, меняем со значением node_to_delete и удаляем
 
         Node *pp = node_to_delete->left;
         if (pp->right != nullptr) {//проверка на наличие правого потомка
@@ -239,22 +241,23 @@ bool BSTree::Tree::remove(int val) {
                 pp = pp->right;
 
             node_to_delete->data = pp->data;
-            Node *prodecessor = nullptr;
+            Node *predecessor = nullptr;
             if (pp->right != nullptr)
-                prodecessor = pp->right;
-            else { prodecessor = pp; }
-            if (pp == node_to_delete)// случай, когда родитель prodecessor является подлежащим удалению элементом
-                pp->left = prodecessor->left;
-            else if (prodecessor->left !=
-                     nullptr)// когда у prodecessor есть левый потомок, которого не должны потерять
+                predecessor = pp->right;
+            else { predecessor = pp; }
+            if (pp == node_to_delete)// случай, когда родитель predecessor является подлежащим удалению элементом
             {
-                pp->right = prodecessor->left;
+                pp->left = predecessor->left;
+            } else if (predecessor->left != nullptr)
+                // когда у predecessor есть левый потомок, которого не должны потерять
+            {
+                pp->right = predecessor->left;
             } else {
                 //левого потомка нет, просто обнуляем значение
                 pp->right = nullptr;
             }
 
-            delete prodecessor;//освобождаем память
+            delete predecessor;//освобождаем память
         } else {
             node_to_delete->data = pp->data;
             node_to_delete->left = pp->left;
@@ -262,7 +265,7 @@ bool BSTree::Tree::remove(int val) {
         }
 
         cout << "Узел был успешно удален из дерева\n";
-        return true;
+        return;
     }
 
 }
@@ -275,32 +278,40 @@ bool BSTree::Tree::exist(int val) {
     return false;
 }
 
+
 void BSTree::Tree::swap(BSTree::Tree &tree) {
     std::swap(root, tree.root);
 }
 
-BSTree::Tree & BSTree::Tree::operator=(BSTree::Tree &tree) {
+BSTree::Tree &BSTree::Tree::operator=(BSTree::Tree &tree) {
     this->clean(root);
-    Tree tmp{ tree };
+    Tree tmp{tree};
     this->swap(tmp);
     return *this;
 }
 
-ostream & operator<<(ostream &stream, const BSTree::Tree &tree) {
+
+stringstream &operator<<(stringstream &stream, const BSTree::Tree &tree) {
+    // добавление еще одного оператора для грамотной работы конструктора копирования
+    tree.print_how(BSTree::Tree::order::direct, stream);
+    return stream;
+}
+
+ostream &operator<<(ostream &stream, const BSTree::Tree &tree) {
     tree.print_how(BSTree::Tree::order::direct, stream);
     return stream;
 
 }
 
 BSTree::Tree::Tree(const BSTree::Tree &tree) {
-// это не хочет работать, и мешает работе всей программы
-    /*    string str;
-    stringstream out(str);
+    // почему-то это не работает, однако за счет добавления перегруженного оператора <<  не выдает ошибку при компиляции
+    stringstream out;
     out << tree;
     int value;
     while (out >> value) {
         this->insert(value);
-    }*/
+    }
+
 }
 
 
